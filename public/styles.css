@@ -1,6 +1,6 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+    background-color: #e9ecef;
     margin: 0;
     padding: 0;
     display: flex;
@@ -11,48 +11,116 @@ body {
 
 .container {
     text-align: center;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 90%; 
-    max-width: 400px; 
-    box-sizing: border-box; 
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+}
+
+.register-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #007BFF; 
+    border: 1px solid #007BFF; 
+    border-radius: 4px;
+    background-color: #f8f9fa; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+.register-link:hover {
+    background-color: #007BFF;
+    color: white;
 }
 
 h1 {
-    color: #333;
+    color: #343a40;
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 form {
     margin: 0;
 }
 
+label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #495057;
+}
+
 input {
-    width: 100%; 
-    padding: 10px;
+    width: 100%;
+    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
 }
 
 button {
-    width: 100%; 
-    padding: 10px;
+    width: 100%;
+    padding: 12px;
     background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 #responseMessage {
     color: red;
     margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    button {
+        font-size: 14px;
+    }
 }
