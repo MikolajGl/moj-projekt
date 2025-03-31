@@ -26,23 +26,24 @@ form.addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('http://localhost:3001/login', { // Upewnij się, że port jest zgodny z backendem
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+    const response = await fetch('http://localhost:3001/login', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
 
-        const result = await response.json();
+    let resultText = await response.text(); // Pobieramy odpowiedź jako tekst
 
-        if (response.ok) {
-            // Przekierowanie do test1.html po zalogowaniu
-            window.location.href = 'test1.html';
-        } else {
-            document.getElementById('responseMessage').innerText = result.message;
-        }
-    } catch (error) {
-        document.getElementById('responseMessage').innerText = "Błąd połączenia z serwerem";
+    if (response.ok) {
+        window.location.href = 'test1.html'; // Przekierowanie po poprawnym logowaniu
+    } else {
+        // Jeśli odpowiedź NIE jest OK (np. 401 lub 404), wyświetl komunikat
+        document.getElementById('responseMessage').innerText = resultText;
     }
+} catch (error) {
+    console.error("Błąd logowania:", error);
+    document.getElementById('responseMessage').innerText = "Błąd połączenia z serwerem";
+}
 });
     </script>
 </body>

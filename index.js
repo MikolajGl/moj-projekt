@@ -45,14 +45,18 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
-
-  if (!user) return res.status(404).send('Użytkownik nie istnieje');
+  
+  if (!user) {
+    console.log("Błąd: Użytkownik nie istnieje");
+    return res.status(404).send('Użytkownik nie istnieje');}
 
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
-  if (!isPasswordCorrect) return res.status(401).send('Nieprawidłowe hasło');
+  if (!isPasswordCorrect) {
+    console.log("Błąd: Nieprawidłowe hasło");
+    return res.status(401).send('Nieprawidłowe hasło');}
 
   const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
-  res.json({ message: 'Zalogowano', token });
+  res.send({ message: 'Zalogowano', token });
 });
 
 // Start serwera
