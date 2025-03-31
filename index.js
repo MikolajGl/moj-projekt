@@ -29,11 +29,11 @@ app.get('/', (req, res) => {
 
 // Rejestracja użytkownika
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role = "user" } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, role });
     await user.save();
     res.status(201).send('Użytkownik zarejestrowany');
   } catch (err) {
