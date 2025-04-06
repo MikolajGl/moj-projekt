@@ -9,6 +9,8 @@ const path = require('path');
 const User = require('./user');
 const Product = require('./product');
 const Order = require('./Order');
+const product = require('./product');
+const complaint = require('./complaint');
 
 const app = express();
 
@@ -45,9 +47,16 @@ app.get('/api/products', async (req, res) => {
 });
 
 app.get('/api/orders', async (req, res) => {
-  const Orders = await Order.find().populate('userId');
+  const Orders = await Order.find().populate('userId').populate('products.productId');
   res.json(Orders);
 });
+
+
+app.get('/api/complaints', async (req, res) => {
+  const complaints = await Order.find().populate('userId').populate('products.productId');
+  res.json(complaints);
+});
+
 
 app.post('/register', async (req, res) => {
   const { username, password, role = 'user' } = req.body;
@@ -124,6 +133,22 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
 
     await order.save();
     res.status(201).json({ message: 'Zamówienie zapisane', orderId: order._id });
+  } catch (err) {
+    res.status(500).send('Błąd zapisu zamówienia: ' + err.message);
+  }
+});
+
+app.post('/api/complaints', authenticateToken, async (req, res) => {
+  const { opisproblemu } = req.body;
+  if (!opisproblemu || !opis.length) {return res.status(400).send('Brak produktów w zamówieniu');}
+  try {
+    const complaint = new complaint({
+      userId: req.user?.userId,
+      productId: req.product?.product,
+      opisproblemu
+    });
+    await complaint.save();
+    res.status(201).json({ message: 'Zamówienie zapisane', complaintId: complaint._id });
   } catch (err) {
     res.status(500).send('Błąd zapisu zamówienia: ' + err.message);
   }
