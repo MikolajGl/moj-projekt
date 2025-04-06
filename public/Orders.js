@@ -43,7 +43,7 @@ async function fetchAllOrders() {
         <p>Address: ${order.address}</p>
         <p>Payment ID: ${order.paymentID}</p>
          <h4>Products:</h4>
-        <ul>${order.products.map(p => `<li>${p.productId } -${p.name } -${p.price} - ${p.quantity} pcs</li>`).join('')}
+        <ul>${order.products.map(p => `<li> <p>nazwa:${p.name }</p> <p>cena:${p.price}</p> <p>ilosc:${p.quantity}</p> </li>`).join('')}
         </ul>
         <hr>
         `;
