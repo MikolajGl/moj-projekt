@@ -30,7 +30,7 @@ mongoose.connect(MONGO_URI, {
   .catch(err => console.error('MongoDB error:', err));
 
 // Routes
-app.get('/admin-panel', authenticateToken, isAdmin, (req, res) => {
+app.get('/admin-panel', (req, res) => {
   res.sendFile(path.join(__dirname, 'protected/admin.html'));
 });
 
@@ -59,19 +59,34 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) return res.status(404).send('Użytkownik nie istnieje');
+  console.log('Login attempt:', username);
 
-  const isCorrect = await bcrypt.compare(password, user.password);
-  if (!isCorrect) return res.status(401).send('Nieprawidłowe hasło');
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'Użytkownik nie istnieje' });
+    }
 
-  const token = jwt.sign(
-    { userId: user._id, role: user.role },
-    JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+    const isCorrect = await bcrypt.compare(password, user.password);
+    if (!isCorrect) {
+      console.log('Incorrect password');
+      return res.status(401).json({ message: 'Nieprawidłowe hasło' });
+    }
 
-  res.send({ message: 'Zalogowano', token });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    console.log('Login successful:', username);
+    return res.json({ message: 'Zalogowano', token });
+
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Błąd serwera przy logowaniu' });
+  }
 });
 
 app.post('/api/products', authenticateToken, isAdmin, async (req, res) => {

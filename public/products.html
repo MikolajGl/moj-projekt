@@ -9,16 +9,22 @@
 </head>
 <body class="admin-page">
     <div class="sidebar">
-        <div class="logo">EcommerceAdmin</div>
-        <div class="menu-item"><i class="fas fa-chart-line"></i></i> Dashboard</div>
-        <div class="menu-item active"><i class="fas fa-box"></i> Products</div>
-        <div class="menu-item"><i class="fas fa-shopping-cart"></i> Orders</div>
-        <div class="menu-item"><i class="fas fa-cog"></i> Settings</div>
+        <div class="logo">Products</div>
     </div>
 
     <div class="main-content">
         <h1>Products Page</h1>
         <p>Tutaj będzie lista produktów, formularze dodawania/edycji itp.</p>
-    </div>
+        <h2>Dodaj produkt</h2>
+  <form id="productForm">
+  <input type="text" id="name" placeholder="Nazwa produktu" required>
+  <input type="number" id="price" placeholder="Cena" required>
+  <input type="text" id="description" placeholder="Opis" required>
+  <input type="text" id="image" placeholder="URL obrazka">
+  <input type="number" id="stock" placeholder="Stan magazynowy" required>
+  <button type="submit">Dodaj</button>
+  </form>
+    
+  <script src="products.js"></script>
+</div>
 </body>
-</html>
