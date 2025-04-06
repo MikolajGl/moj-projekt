@@ -44,6 +44,11 @@ app.get('/api/products', async (req, res) => {
   res.json(products);
 });
 
+app.get('/api/orders:id', async (req, res) => {
+  const Orders = await Order.find();
+  res.json(Orders);
+});
+
 app.post('/register', async (req, res) => {
   const { username, password, role = 'user' } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -112,7 +117,9 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
     const order = new Order({
       userId: req.user?.userId,
       products,
-      total
+      total,
+      Adress,
+      PaymentID
     });
 
     await order.save();
