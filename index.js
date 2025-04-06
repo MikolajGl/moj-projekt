@@ -44,7 +44,7 @@ app.get('/api/products', async (req, res) => {
   res.json(products);
 });
 
-app.get('/api/orders:id', async (req, res) => {
+app.get('/api/orders',authenticateToken, isAdmin, async (req, res) => {
   const Orders = await Order.find();
   res.json(Orders);
 });

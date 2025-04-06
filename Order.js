@@ -9,8 +9,8 @@ const orderSchema = new mongoose.Schema({
     quantity: Number,
   }],
   total: { type: String, required: true },
-  Adress: { type: String, required: true },
-  PaymentID: { type: String, required: true },
+  address: { type: String, required: true },
+  paymentID: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
