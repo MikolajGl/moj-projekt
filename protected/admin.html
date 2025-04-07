@@ -4,31 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcommerceAdmin</title>
+    <link rel="stylesheet" href="/public/styles.css">
 </head>
-<body>
+<body class="admin-page">
     <!-- Lewy panel nawigacyjny -->
-    <div style="width: 200px; float: left; padding: 20px; background-color: #f0f0f0; height: 100vh;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 30px;">EcommerceAdmin</div>
+    <div class="sidebar">
+        <div class="logo">EcommerceAdmin</div>
         
-        <a href="Dashboard.html" class="register-link" style="display: block; width: 100%; padding: 10px 0; background-color: transparent; border: 1px solid #ccc; border-radius: 2px; text-align: center; color: #333; text-decoration: none; font-size: 14px; transition: background-color 0.3s; cursor: pointer; margin-bottom: 10px;">
-            Tablica
-        </a>
-        <a href="products.html" class="register-link" style="display: block; width: 100%; padding: 10px 0; background-color: transparent; border: 1px solid #ccc; border-radius: 2px; text-align: center; color: #333; text-decoration: none; font-size: 14px; transition: background-color 0.3s; cursor: pointer; margin-bottom: 10px;">
-            Dodawanie produktów
-        </a>
-        <a href="Orders.html" class="register-link" style="display: block; width: 100%; padding: 10px 0; background-color: transparent; border: 1px solid #ccc; border-radius: 2px; text-align: center; color: #333; text-decoration: none; font-size: 14px; transition: background-color 0.3s; cursor: pointer; margin-bottom: 10px;">
-            Zamówienia
-        </a>
-        <a href="Settings.html" class="register-link" style="display: block; width: 100%; padding: 10px 0; background-color: transparent; border: 1px solid #ccc; border-radius: 2px; text-align: center; color: #333; text-decoration: none; font-size: 14px; transition: background-color 0.3s; cursor: pointer;">
-            Ustawienia
-        </a>
-        <a href="Complaints.html" class="register-link" style="display: block; width: 100%; padding: 10px 0; background-color: transparent; border: 1px solid #ccc; border-radius: 2px; text-align: center; color: #333; text-decoration: none; font-size: 14px; transition: background-color 0.3s; cursor: pointer;">
-            Zgłoszenia
-        </a>
+        <a href="/public/pDashboard.html" class="menu-item">Tablica</a>
+        <a href="/public/products.html" class="menu-item">Dodawanie produktów</a>
+        <a href="/public/Orders.html" class="menu-item">Zamówienia</a>
+        <a href="/public/Settings.html" class="menu-item">Ustawienia</a>
+        <a href="/public/complaints.html" class="menu-item">Zgłoszenia</a>
     </div>
-    <!-- Główna zawartość -->
-    <div style="margin-left: 220px; padding: 20px;">
-        <img src="/images/main.jpg" alt="lrz">
+
+    <!-- Główна zawartość -->
+    <div class="main-content">
+        <img src="/public/images/main.jpg" alt="lrz" class="main-image">
     </div>
     <script src="admin.js"></script>
 </body>

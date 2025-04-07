@@ -181,3 +181,51 @@ body.admin-page {
     margin-top: 0;
     color: #343a40;
 }
+
+body.admin-page {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-right: 1px solid #495057;
+}
+
+.sidebar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #fff;
+    border-bottom: 1px solid #495057;
+    padding-bottom: 15px;
+}
+
+.menu-item {
+    display: block;
+    padding: 10px 15px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+.menu-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
