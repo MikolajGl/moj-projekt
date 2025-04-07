@@ -1,4 +1,3 @@
-// Получение токена из localStorage
 const token = localStorage.getItem('token');
 
 if (!token) {
@@ -19,7 +18,6 @@ if (payload.role !== 'admin') {
   window.location.href = 'test1.html';
 }
 
-// Функция для отображения списка продуктов
 async function fetchProducts() {
   const response = await fetch('http://localhost:3001/api/products', {
     headers: {
@@ -34,22 +32,24 @@ async function fetchProducts() {
 
   products.forEach(product => {
     const productDiv = document.createElement('div');
-    productDiv.classList.add('product-item');
+    productDiv.classList.add('product-card');
     productDiv.innerHTML = `
-      <h3>${product.name}</h3>
-      <p>Cena: ${product.price} PLN</p>
-      <p>Opis: ${product.description}</p>
-      <p>Stan magazynowy: ${product.stock}</p>
-      ${product.image ? `<img src="${product.image}" alt="${product.name}" style="max-width: 200px;">` : ''}
+      <img src="${product.image}" alt="${product.name}" class="product-image">
+      <div class="product-info">
+        <h3 class="product-name">${product.name}</h3>
+        <p class="product-price">Cena: ${product.price} PLN</p>
+        <p class="product-description">${product.description}</p>
+        <p class="product-stock">Stan magazynowy: ${product.stock}</p>
+      </div>
     `;
     productList.appendChild(productDiv);
   });
 }
 
-// Загрузка продуктов при загрузке страницы
+
 fetchProducts();
 
-// Обработчик для добавления нового продукта
+
 document.getElementById('productForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -72,5 +72,5 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
 
   const result = await response.json();
   alert('Produkt dodany!');
-  fetchProducts(); // Обновляем список продуктов после добавления
+  fetchProducts(); 
 });

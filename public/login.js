@@ -23,9 +23,9 @@ form.addEventListener('submit', async (e) => {
       const role = payload.role;
     
       if (role === 'admin') {
-        window.location.href = '/admin-panel';
+        window.location.href = '/protected/admin.html';
       } else {
-        window.location.href = 'test1.html';
+        window.location.href = 'test1.html';//??????????????
       }
     } else {
       document.getElementById('responseMessage').innerText = result.message;
