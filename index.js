@@ -40,10 +40,31 @@ app.get('/', (req, res) => {
   res.send('Serwer działa!');
 });
 
+// dla strony głównej
+app.get('/', (req, res) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.sendFile(path.join(__dirname, 'public/login.html'));
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.sendFile(path.join(__dirname, 'public/login.html'));
+    }
+    res.redirect('/admin-panel');
+  });
+});
+
 
 app.get('/api/products', async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
+  try {
+    const products = await Product.find(); 
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ message: 'Błąd podczas pobierania produktów: ' + err.message });
+  }
 });
 
 app.get('/api/orders', async (req, res) => {

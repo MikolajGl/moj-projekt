@@ -229,3 +229,55 @@ body.admin-page {
     background-color: #007bff;
     color: #fff;
 }
+
+.compact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.compact-form .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.compact-form input {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    min-width: 150px; 
+}
+
+.compact-form input#description,
+.compact-form input#image {
+    flex: 2; 
+}
+
+.compact-form button.small-button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px; 
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 100px;
+    text-align: center;
+}
+
+.compact-form button.small-button:hover {
+    background-color: #0056b3;
+}
+
+.compact-form input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
