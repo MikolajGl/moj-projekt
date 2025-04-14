@@ -19,20 +19,36 @@ const token = localStorage.getItem('token');
           <h3>${product.name}</h3>
           <p>Cena: ${product.price} zł</p>
           <input type="number" id="qty-${product._id}" min="1" value="1">
-          <button onclick="addToCart('${product._id}', '${product.name}', ${product.price})">Dodaj do koszyka</button>
+          <button
+          data-stock="${product.stock}" 
+          onclick="addToCart('${product._id}', '${product.name}', ${product.price}, ${product.stock})">Dodaj do koszyka</button>
+          <p>Ilość na stanie: ${product.stock}</p>
         `;
         productsContainer.appendChild(div);
       });
     }
 
-    function addToCart(id, name, price) {
-      const quantity = parseInt(document.getElementById(`qty-${id}`).value);
+    function addToCart(id, name, price, stock) {
+      let quantity = parseInt(document.getElementById(`qty-${id}`).value);
       const existing = cart.find(p => p.productId === id);
+      const currentInCart = existing ? existing.quantity : 0;
+    
+      if (quantity + currentInCart > stock) {
+        const available = stock - currentInCart;
+        if (available <= 0) {
+          alert("Nie możesz dodać więcej – osiągnięto limit magazynowy.");
+          return;
+        }
+        alert(`Nie ma tyle dostępnych produktów. Możesz dodać jeszcze maksymalnie ${available} szt.`);
+        quantity = available;
+      }
+    
       if (existing) {
         existing.quantity += quantity;
       } else {
         cart.push({ productId: id, name, price, quantity });
       }
+    
       renderCart();
     }
 
@@ -49,7 +65,7 @@ const token = localStorage.getItem('token');
     document.getElementById('orderButton').addEventListener('click', async () => {
       const address = prompt('Podaj adres dostawy:');
       const paymentID = 'PAY-' + Math.random().toString(36).substring(7);
-      
+
       const res = await fetch('http://localhost:3001/api/orders', {
         method: 'POST',
         headers: {
