@@ -7,4 +7,4 @@ const complaintSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('complaint', complaintSchema);
+module.exports = mongoose.model('Complaint', complaintSchema);

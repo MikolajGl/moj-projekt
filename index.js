@@ -9,7 +9,6 @@ const path = require('path');
 const User = require('./user');
 const Product = require('./product');
 const Order = require('./Order');
-const product = require('./product');
 const complaint = require('./complaint');
 
 const app = express();
@@ -52,7 +51,7 @@ app.get('/api/orders', async (req, res) => {
 });
 
 
-app.get('/api/complaints', async (req, res) => {
+app.get('/api/complaint', async (req, res) => {
   const complaints = await Order.find().populate('userId').populate('products.productId');
   res.json(complaints);
 });
@@ -114,7 +113,7 @@ app.post('/api/products', authenticateToken, isAdmin, async (req, res) => {
 });
 
 app.post('/api/orders', authenticateToken, async (req, res) => {
-  const { products } = req.body;
+  const { products, address, paymentID } = req.body;
 
   if (!products || !products.length) {
     return res.status(400).send('Brak produktów w zamówieniu');
@@ -127,8 +126,8 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
       userId: req.user?.userId,
       products,
       total,
-      Adress,
-      PaymentID
+      address,
+      paymentID
     });
 
     await order.save();
@@ -138,7 +137,7 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
   }
 });
 
-app.post('/api/complaints', authenticateToken, async (req, res) => {
+app.post('/api/complaint', authenticateToken, async (req, res) => {
   const { opisproblemu } = req.body;
   if (!opisproblemu || !opis.length) {return res.status(400).send('Brak produktów w zamówieniu');}
   try {
