@@ -9,22 +9,33 @@
 </head>
 <body class="admin-page">
     <div class="sidebar">
-        <div class="logo">Products</div>
+        <div class="logo">Produkty</div>
+        <a href="orders.html" class="menu-item">Zamówienia</a>
+        <a href="settings.html" class="menu-item">Ustawienia</a>
+        <a href="complaints.html" class="menu-item">Reklamacje</a>
     </div>
 
+
     <div class="main-content">
-        <h1>Products Page</h1>
-        <p>Tutaj będzie lista produktów, formularze dodawania/edycji itp.</p>
-        <h2>Dodaj produkt</h2>
-  <form id="productForm">
-  <input type="text" id="name" placeholder="Nazwa produktu" required>
-  <input type="number" id="price" placeholder="Cena" required>
-  <input type="text" id="description" placeholder="Opis" required>
-  <input type="text" id="image" placeholder="URL obrazka">
-  <input type="number" id="stock" placeholder="Stan magazynowy" required>
-  <button type="submit">Dodaj</button>
-  </form>
+        <h2>Lista produktów</h2>
+        <div id="productList" class="product-grid"></div> 
     
-  <script src="products.js"></script>
+        <h2>Dodaj produkt</h2>
+        <form id="productForm" class="compact-form">
+            <div class="form-row">
+                <input type="text" id="name" placeholder="Nazwa produktu" required>
+                <input type="number" id="price" placeholder="Cena" required>
+                <input type="number" id="stock" placeholder="Stan magazynowy" required>
+            </div>
+            <div class="form-row">
+                <input type="text" id="description" placeholder="Opis" required>
+                <input type="text" id="image" placeholder="URL obrazka">
+                <button type="submit" class="small-button">Dodaj</button>
+            </div>
+        </form>
+    
+        <script src="products.js"></script>
+    </div>
+</div>
 </div>
 </body>
