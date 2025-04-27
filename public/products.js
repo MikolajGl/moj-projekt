@@ -1,6 +1,7 @@
 const token = localStorage.getItem('token');
 
 if (!token) {
+  alert('Brak tokena. Zaloguj się ponownie.');
   window.location.href = 'login.html';
 }
 
@@ -19,58 +20,77 @@ if (payload.role !== 'admin') {
 }
 
 async function fetchProducts() {
-  const response = await fetch('http://localhost:3001/api/products', {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  try {
+    const response = await fetch('http://localhost:3001/api/products', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        alert('Brak dostępu: tylko dla admina.');
+        window.location.href = 'login.html';
+      } else {
+        alert('Błąd podczas pobierania produktów.');
+      }
+      return;
     }
-  });
 
-  const products = await response.json();
+    const products = await response.json();
 
-  const productList = document.getElementById('productList');
-  productList.innerHTML = ''; // Очищаем контейнер перед добавлением новых продуктов
-
-  products.forEach(product => {
-    const productDiv = document.createElement('div');
-    productDiv.classList.add('product-card');
-    productDiv.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image">
-      <div class="product-info">
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-price">Cena: ${product.price} PLN</p>
-        <p class="product-description">${product.description}</p>
-        <p class="product-stock">Stan magazynowy: ${product.stock}</p>
-      </div>
-    `;
-    productList.appendChild(productDiv);
-  });
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+    products.forEach(product => {
+      const productDiv = document.createElement('div');
+      productDiv.classList.add('product-card');
+      productDiv.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" class="product-image">
+        <div class="product-info">
+          <h3 class="product-name">${product.name}</h3>
+          <p class="product-price">Cena: ${product.price} PLN</p>
+          <p class="product-description">${product.description}</p>
+          <p class="product-stock">Stan magazynowy: ${product.stock}</p>
+        </div>
+      `;
+      productList.appendChild(productDiv);
+    });
+  } catch (err) {
+    console.error('Błąd podczas pobierania produktów:', err);
+    alert('Nie udało się pobrać produktów.');
+  }
 }
 
-
 fetchProducts();
-
 
 document.getElementById('productForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const product = {
-    name: document.getElementById('name').value,
-    price: parseFloat(document.getElementById('price').value),
-    description: document.getElementById('description').value,
-    image: document.getElementById('image').value,
-    stock: parseInt(document.getElementById('stock').value)
-  };
+  const formData = new FormData();
+  formData.append('name', document.getElementById('name').value);
+  formData.append('price', parseFloat(document.getElementById('price').value));
+  formData.append('description', document.getElementById('description').value);
+  formData.append('stock', parseInt(document.getElementById('stock').value));
+  formData.append('image', document.getElementById('image').files[0]);
 
-  const response = await fetch('http://localhost:3001/api/products', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(product)
-  });
+  try {
+    const response = await fetch('http://localhost:3001/api/products', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
 
-  const result = await response.json();
-  alert('Produkt dodany!');
-  fetchProducts(); 
+    if (response.ok) {
+      alert('Produkt dodany!');
+      fetchProducts();
+    } else {
+      const error = await response.json();
+      alert(`Błąd: ${error.message}`);
+    }
+  } catch (err) {
+    console.error('Błąd podczas dodawania produktu:', err);
+    alert('Nie udało się dodać produktu.');
+  }
 });
