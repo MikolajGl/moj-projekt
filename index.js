@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
-const multer = require('multer');
 const User = require('./user');
 const Product = require('./product');
 const Order = require('./Order');
@@ -18,34 +17,29 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-const PORT = process.env.PORT || 3001;
+
+const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const fs = require('fs');
-const uploadDir = path.join(__dirname, 'public/uploads');
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
+// Connect to DB
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+// Routes
+app.get('/admin-panel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'protected/admin.html'));
 });
 
-const upload = multer({ storage });
+app.get('/', (req, res) => {
+  res.send('Serwer działa!');
+});
 
+// dla strony głównej
 app.get('/', (req, res) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -62,39 +56,80 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/admin-panel', (req, res) => {
-  res.sendFile(path.join(__dirname, 'protected/admin.html'));
-});
 
 app.get('/api/products', async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find(); 
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json({ message: 'Błąd podczas pobierania produktów: ' + err.message });
   }
 });
 
-app.post('/api/products', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
-  const { name, price, description, stock } = req.body;
+app.get('/api/orders', async (req, res) => {
+  const Orders = await Order.find().populate('userId').populate('products.productId');
+  res.json(Orders);
+});
 
-  if (!req.file) {
-    return res.status(400).json({ message: 'Zdjęcie jest wymagane.' });
-  }
+
+app.get('/api/complaint', async (req, res) => {
+  const complaints = await Order.find().populate('userId').populate('products.productId');
+  res.json(complaints);
+});
+
+
+app.post('/register', async (req, res) => {
+  const { username, password, role = 'user' } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const product = new Product({
-      name,
-      price,
-      description,
-      stock,
-      image: `/uploads/${req.file.filename}`
-    });
-
-    await product.save();
-    res.status(201).json({ message: 'Produkt dodany!', product });
+    const user = new User({ username, password: hashedPassword, role });
+    await user.save();
+    res.status(201).send('Użytkownik zarejestrowany');
   } catch (err) {
-    res.status(500).json({ message: 'Błąd podczas dodawania produktu: ' + err.message });
+    res.status(500).send('Błąd rejestracji: ' + err.message);
+  }
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  console.log('Login attempt:', username);
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'Użytkownik nie istnieje' });
+    }
+
+    const isCorrect = await bcrypt.compare(password, user.password);
+    if (!isCorrect) {
+      console.log('Incorrect password');
+      return res.status(401).json({ message: 'Nieprawidłowe hasło' });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    console.log('Login successful:', username);
+    return res.json({ message: 'Zalogowano', token });
+
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Błąd serwera przy logowaniu' });
+  }
+});
+
+app.post('/api/products', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(500).send('Błąd dodawania produktu: ' + err.message);
   }
 });
 
@@ -125,24 +160,22 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
 
 app.post('/api/complaint', authenticateToken, async (req, res) => {
   const { opisproblemu } = req.body;
-
-  if (!opisproblemu || !opisproblemu.length) {
-    return res.status(400).send('Brak opisu problemu');
-  }
-
+  if (!opisproblemu || !opis.length) {return res.status(400).send('Brak produktów w zamówieniu');}
   try {
     const complaint = new complaint({
       userId: req.user?.userId,
+      productId: req.product?.product,
       opisproblemu
     });
-
     await complaint.save();
-    res.status(201).json({ message: 'Reklamacja zapisana', complaintId: complaint._id });
+    res.status(201).json({ message: 'Zamówienie zapisane', complaintId: complaint._id });
   } catch (err) {
-    res.status(500).send('Błąd zapisu reklamacji: ' + err.message);
+    res.status(500).send('Błąd zapisu zamówienia: ' + err.message);
   }
 });
 
+
+// Middleware
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];

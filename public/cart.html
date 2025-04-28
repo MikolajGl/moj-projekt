@@ -2,28 +2,20 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Koszyk</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .product { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    .cart { margin-top: 30px; }
+  </style>
 </head>
-<body class="cart-page">
-  <div class="sidebar">
-    <div class="logo">Koszyk</div>
-    <a href="products.html" class="menu-item">Produkty</a>
-    <a href="orders.html" class="menu-item">Zamówienia</a>
-    <a href="settings.html" class="menu-item">Ustawienia</a>
-    <a href="complaints.html" class="menu-item">Reklamacje</a>
-  </div>
+<body>
+  <h1>Sklep - Produkty</h1>
+  <div id="products"></div>
 
-  <div class="main-content">
-    <h1>Sklep - Produkty</h1>
-    <div id="products" class="product-grid"></div>
-
-    <h2>Koszyk</h2>
-    <div id="cart" class="cart"></div>
-    <button id="orderButton" class="order-button">Zamów</button>
-  </div>
-
+  <h2>Koszyk</h2>
+  <div id="cart" class="cart"></div>
+  <button id="orderButton">Zamów</button>
   <script src="cart.js"></script>
 </body>
 </html>
