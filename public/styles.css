@@ -346,3 +346,52 @@ body.admin-page {
     color: #28a745;
     margin: 5px 0;
 }
+
+/*Cart*/
+.order-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 200px;
+    text-align: center;
+}
+
+.order-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.order-button:active {
+    transform: scale(0.95);
+}
+
+.cart {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.cart p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #343a40;
+}
+
+.cart strong {
+    font-size: 16px;
+    color: #007bff;
+}

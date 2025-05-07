@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>Koszyk</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    .product { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
-    .cart { margin-top: 30px; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <h1>Sklep - Produkty</h1>
-  <div id="products"></div>
+<body class="admin-page">
+  <div class="sidebar">
+    <div class="logo">Koszyk</div>
+  </div>
 
-  <h2>Koszyk</h2>
-  <div id="cart" class="cart"></div>
-  <button id="orderButton">Zamów</button>
+  <div class="main-content">
+    <h1>Produkty</h1>
+    <div id="products" class="product-grid"></div>
+
+    <h2>Koszyk</h2>
+    <div id="cart" class="cart compact-form"></div>
+    <button id="orderButton" class="order-button">Zamów</button>
+  </div>
+
   <script src="cart.js"></script>
 </body>
 </html>
