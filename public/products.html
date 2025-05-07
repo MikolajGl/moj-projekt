@@ -21,7 +21,7 @@
         <div id="productList" class="product-grid"></div> 
     
         <h2>Dodaj produkt</h2>
-        <form id="productForm" class="compact-form">
+        <form id="productForm" class="compact-form" enctype="multipart/form-data">
             <div class="form-row">
                 <input type="text" id="name" placeholder="Nazwa produktu" required>
                 <input type="number" id="price" placeholder="Cena" required>
@@ -29,11 +29,10 @@
             </div>
             <div class="form-row">
                 <input type="text" id="description" placeholder="Opis" required>
-                <input type="text" id="image" placeholder="URL obrazka">
+                <input type="file" id="image" accept="image/*" required> <!-- Поле для загрузки файла -->
                 <button type="submit" class="small-button">Dodaj</button>
             </div>
         </form>
-    
         <script src="products.js"></script>
     </div>
 </div>

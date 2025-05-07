@@ -28,7 +28,7 @@ async function fetchProducts() {
   const products = await response.json();
 
   const productList = document.getElementById('productList');
-  productList.innerHTML = ''; // Очищаем контейнер перед добавлением новых продуктов
+  productList.innerHTML = ''; 
 
   products.forEach(product => {
     const productDiv = document.createElement('div');
@@ -46,31 +46,35 @@ async function fetchProducts() {
   });
 }
 
-
 fetchProducts();
-
 
 document.getElementById('productForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const product = {
-    name: document.getElementById('name').value,
-    price: parseFloat(document.getElementById('price').value),
-    description: document.getElementById('description').value,
-    image: document.getElementById('image').value,
-    stock: parseInt(document.getElementById('stock').value)
-  };
+  const formData = new FormData();
+  formData.append('name', document.getElementById('name').value);
+  formData.append('price', parseFloat(document.getElementById('price').value));
+  formData.append('description', document.getElementById('description').value);
+  formData.append('stock', parseInt(document.getElementById('stock').value));
+  formData.append('image', document.getElementById('image').files[0]); 
+  try {
+    const response = await fetch('http://localhost:3001/api/products', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}` 
+      },
+      body: formData 
+    });
 
-  const response = await fetch('http://localhost:3001/api/products', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(product)
-  });
-
-  const result = await response.json();
-  alert('Produkt dodany!');
-  fetchProducts(); 
+    if (response.ok) {
+      alert('Produkt dodany!');
+      fetchProducts();
+    } else {
+      const error = await response.json();
+      alert(`Błąd: ${error.message}`);
+    }
+  } catch (err) {
+    console.error('Błąd podczas dodawania produktu:', err);
+    alert('Nie udało się dodać produktu.');
+  }
 });
