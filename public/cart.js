@@ -1,97 +1,246 @@
 const token = localStorage.getItem('token');
 if (!token) {
-  alert('Zaloguj się, aby zamówić.');
-  window.location.href = 'login.html';
+    alert('Zaloguj się, aby zamówić.');
+    window.location.href = 'login.html';
 }
 
 const productsContainer = document.getElementById('products');
 const cartContainer = document.getElementById('cart');
+const searchInput = document.getElementById('searchProducts');
+const modal = document.getElementById('orderModal');
 const cart = [];
 
-async function fetchProducts() {
-  const res = await fetch('http://localhost:3001/api/products');
-  const products = await res.json();
+try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    document.getElementById('userName').textContent = payload.username;
+} catch (err) {
+    console.error('Token parsing error:', err);
+}
 
-  products.forEach(product => {
-    const div = document.createElement('div');
-    div.className = 'product-card';
-    div.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image">
-      <div class="product-info">
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-price">Cena: ${product.price} zł</p>
-        <p class="product-stock">Ilość na stanie: ${product.stock}</p>
-        <input type="number" id="qty-${product._id}" min="1" value="1" class="compact-form-input">
-        <button
-          class="small-button"
-          onclick="addToCart('${product._id}', '${product.name}', ${product.price}, ${product.stock})">
-          Dodaj do koszyka
-        </button>
+async function fetchProducts() {
+    try {
+        const res = await fetch('http://localhost:3001/api/products', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch products');
+        
+        const products = await res.json();
+        displayProducts(products);
+    } catch (error) {
+        console.error('Error:', error);
+        productsContainer.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                Nie udało się załadować produktów
+            </div>
+        `;
+    }
+}
+
+function displayProducts(products) {
+  productsContainer.innerHTML = products.map(product => `
+      <div class="product-card">
+          <img src="${product.image}" 
+               alt="${product.name}" 
+               class="product-image"
+               onerror="this.src='/images/placeholder.png'"
+               loading="lazy">
+          <!-- ...rest of the product card... -->
       </div>
-    `;
-    productsContainer.appendChild(div);
-  });
+  `).join('');
+}
+
+function displayProducts(products, searchTerm = '') {
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    productsContainer.innerHTML = filteredProducts.map(product => `
+        <div class="product-card">
+            <img src="${product.image}" 
+                 alt="${product.name}" 
+                 class="product-image"
+                 onerror="this.src='images/placeholder.png'">
+            <div class="product-info">
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-price">${product.price.toFixed(2)} zł</p>
+                <p class="product-stock">Na stanie: ${product.stock} szt.</p>
+                <div class="product-actions">
+                    <div class="quantity-control">
+                        <button onclick="updateQuantity('${product._id}', -1)" class="qty-btn">-</button>
+                        <input type="number" 
+                               id="qty-${product._id}" 
+                               value="1" 
+                               min="1" 
+                               max="${product.stock}" 
+                               class="qty-input">
+                        <button onclick="updateQuantity('${product._id}', 1)" class="qty-btn">+</button>
+                    </div>
+                    <button onclick="addToCart('${product._id}', '${product.name}', ${product.price}, ${product.stock})"
+                            class="add-to-cart">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('') || '<div class="no-products">Nie znaleziono produktów</div>';
+}
+
+function updateQuantity(productId, change) {
+    const input = document.getElementById(`qty-${productId}`);
+    const newValue = parseInt(input.value) + change;
+    if (newValue >= 1 && newValue <= parseInt(input.max)) {
+        input.value = newValue;
+    }
 }
 
 function addToCart(id, name, price, stock) {
-  let quantity = parseInt(document.getElementById(`qty-${id}`).value);
-  const existing = cart.find(p => p.productId === id);
-  const currentInCart = existing ? existing.quantity : 0;
+    const quantity = parseInt(document.getElementById(`qty-${id}`).value);
+    const existing = cart.find(p => p.productId === id);
+    const currentInCart = existing ? existing.quantity : 0;
 
-  if (quantity + currentInCart > stock) {
-    const available = stock - currentInCart;
-    if (available <= 0) {
-      alert("Nie możesz dodać więcej – osiągnięto limit magazynowy.");
-      return;
+    if (quantity + currentInCart > stock) {
+        const available = stock - currentInCart;
+        if (available <= 0) {
+            showNotification("Nie możesz dodać więcej – osiągnięto limit magazynowy.", "error");
+            return;
+        }
+        showNotification(`Dostępne tylko ${available} szt.`, "warning");
+        return;
     }
-    alert(`Nie ma tyle dostępnych produktów. Możesz dodać jeszcze maksymalnie ${available} szt.`);
-    quantity = available;
-  }
 
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    cart.push({ productId: id, name, price, quantity });
-  }
+    if (existing) {
+        existing.quantity += quantity;
+    } else {
+        cart.push({ productId: id, name, price, quantity });
+    }
 
-  renderCart();
+    updateCart();
+    showNotification("Dodano do koszyka", "success");
 }
 
-function renderCart() {
-  cartContainer.innerHTML = '';
-  let total = 0;
-  cart.forEach(item => {
-    total += item.price * item.quantity;
-    cartContainer.innerHTML += `<p>${item.name} x${item.quantity} - ${item.price * item.quantity} zł</p>`;
-  });
-  cartContainer.innerHTML += `<p><strong>Razem: ${total.toFixed(2)} zł</strong></p>`;
+function updateCart() {
+    let total = 0;
+    cartContainer.innerHTML = cart.map(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        return `
+            <div class="cart-item">
+                <div class="item-info">
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${itemTotal.toFixed(2)} zł</span>
+                </div>
+                <div class="item-controls">
+                    <button onclick="updateCartItem('${item.productId}', -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="updateCartItem('${item.productId}', 1)">+</button>
+                </div>
+                <button class="remove-item" onclick="removeFromCart('${item.productId}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('totalPrice').textContent = `${total.toFixed(2)} zł`;
+    document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 }
 
-document.getElementById('orderButton').addEventListener('click', async () => {
-  const address = prompt('Podaj adres dostawy:');
-  const paymentID = 'PAY-' + Math.random().toString(36).substring(7);
+function updateCartItem(productId, change) {
+    const item = cart.find(p => p.productId === productId);
+    if (item) {
+        item.quantity = Math.max(1, item.quantity + change);
+        updateCart();
+    }
+}
 
-  const res = await fetch('http://localhost:3001/api/orders', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      products: cart,
-      address,
-      paymentID
-    })
-  });
+function removeFromCart(productId) {
+    const index = cart.findIndex(p => p.productId === productId);
+    if (index > -1) {
+        cart.splice(index, 1);
+        updateCart();
+        showNotification("Usunięto z koszyka", "info");
+    }
+}
 
-  if (res.ok) {
-    alert('Zamówienie złożone!');
-    cart.length = 0;
-    renderCart();
-  } else {
-    const msg = await res.text();
-    alert('Błąd zamówienia: ' + msg);
-  }
+document.getElementById('orderButton')?.addEventListener('click', () => {
+    if (cart.length === 0) {
+        showNotification("Koszyk jest pusty", "warning");
+        return;
+    }
+    modal.style.display = 'block';
+});
+
+document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const orderData = {
+        products: cart,
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        payment: document.getElementById('payment').value
+    };
+
+    try {
+        const res = await fetch('http://localhost:3001/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        if (!res.ok) throw new Error('Order failed');
+
+        showNotification("Zamówienie złożone pomyślnie!", "success");
+        cart.length = 0;
+        updateCart();
+        closeModal();
+    } catch (error) {
+        showNotification("Błąd podczas składania zamówienia", "error");
+    }
+});
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                          type === 'error' ? 'exclamation-circle' : 
+                          type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+searchInput?.addEventListener('input', (e) => {
+    const term = e.target.value;
+    fetchProducts().then(products => displayProducts(products, term));
+});
+
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+window.onclick = (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+};
+
+document.getElementById('clearCart')?.addEventListener('click', () => {
+    if (confirm('Czy na pewno chcesz wyczyścić koszyk?')) {
+        cart.length = 0;
+        updateCart();
+        showNotification("Koszyk został wyczyszczony", "info");
+    }
 });
 
 fetchProducts();
+updateCart();

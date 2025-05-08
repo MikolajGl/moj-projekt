@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logowanie</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcommerceShop | Logowanie</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
-  <div class="container">
-    <h1>Zaloguj się</h1>
-    <form id="loginForm">
-      <label for="username">Email:</label>
-      <input type="text" id="username" placeholder="name" required><br><br>
+<body class="auth-page">
+    <div class="auth-container">
+        <h1><i class="fas fa-shopping-cart"></i> EcommerceShop</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Email:</label>
+                <input type="text" 
+                       id="username" 
+                       placeholder="Wprowadź email"
+                       required>
+            </div>
 
-      <label for="password">Hasło:</label>
-      <input type="password" id="password" placeholder="Wprowadź hasło" required><br><br>
+            <div class="form-group">
+                <label for="password">Hasło:</label>
+                <input type="password" 
+                       id="password" 
+                       placeholder="Wprowadź hasło"
+                       required>
+            </div>
 
-      <button type="submit">Zaloguj</button>
-    </form>
+            <button type="submit">
+                <i class="fas fa-sign-in-alt"></i> Zaloguj się
+            </button>
+        </form>
 
-    <p id="responseMessage"></p>
-    <a href="register.html" class="register-link">Zarejestruj się</a>
-  </div>
+        <div id="responseMessage" class="response-message"></div>
+        
+        <div class="auth-links">
+            <a href="register.html">
+                <i class="fas fa-user-plus"></i> Zarejestruj się
+            </a>
+        </div>
+    </div>
 
-  <script src="login.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>

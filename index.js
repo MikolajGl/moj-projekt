@@ -18,6 +18,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI;
@@ -111,6 +113,22 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+
+app.get('/api/orders', authenticateToken, async (req, res) => {
+  try {
+      const orders = await Order.find({
+          userId: req.user.id
+      }).sort({ createdAt: -1 });
+      
+      res.status(200).json(orders);
+  } catch (error) {
+      console.error('Orders error:', error);
+      res.status(500).json({ 
+          message: 'Błąd podczas pobierania zamówień',
+          error: error.message 
+      });
+  }
+});
 
 app.get('/admin-panel', (req, res) => {
   res.sendFile(path.join(__dirname, 'protected/admin.html'));

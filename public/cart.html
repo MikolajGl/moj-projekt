@@ -1,24 +1,138 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Koszyk</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcommerceShop | Koszyk</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body class="admin-page">
-  <div class="sidebar">
-    <div class="logo">Koszyk</div>
-  </div>
+   
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-shopping-cart"></i> EcommerceShop
+        </div>
+        
+        <div class="user-info">
+            <i class="fas fa-user-circle fa-2x"></i>
+            <span id="userName">Użytkownik</span>
+            <small id="userRole">Klient</small>
+        </div>
 
-  <div class="main-content">
-    <h1>Produkty</h1>
-    <div id="products" class="product-grid"></div>
+        <nav class="nav-menu">
+            <a href="/public/products.html" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Produkty</span>
+            </a>
+            <a href="/public/cart.html" class="menu-item active">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Koszyk</span>
+                <span class="badge" id="cartCount">0</span>
+            </a>
+            <a href="/public/orders.html" class="menu-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Zamówienia</span>
+            </a>
+            <a href="#" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Wyloguj się</span>
+            </a>
+        </nav>
+    </div>
 
-    <h2>Koszyk</h2>
-    <div id="cart" class="cart compact-form"></div>
-    <button id="orderButton" class="order-button">Zamów</button>
-  </div>
+    <main class="main-content">
+        <header class="content-header">
+            <h1><i class="fas fa-store"></i> Sklep</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <input type="text" 
+                           id="searchProducts" 
+                           placeholder="Wyszukaj produkt..."
+                           autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+        </header>
 
-  <script src="cart.js"></script>
+        <div class="content-grid">
+            <section class="products-section">
+                <h2><i class="fas fa-box"></i> Dostępne produkty</h2>
+                <div id="products" class="product-grid"></div>
+            </section>
+
+            <section class="cart-section">
+                <h2><i class="fas fa-shopping-cart"></i> Twój koszyk</h2>
+                <div id="cart" class="cart-items"></div>
+                
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <span>Do zapłaty:</span>
+                        <span id="totalPrice">0 zł</span>
+                    </div>
+                    
+                    <div class="cart-actions">
+                        <button id="clearCart" class="secondary-button">
+                            <i class="fas fa-trash"></i> Wyczyść koszyk
+                        </button>
+                        <button id="orderButton" class="order-button">
+                            <i class="fas fa-check"></i> Złóż zamówienie
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <h2>Dane do zamówienia</h2>
+            <form id="orderForm" class="form">
+                <div class="form-group">
+                    <label for="name">Imię i nazwisko:</label>
+                    <input type="text" 
+                           id="name" 
+                           required 
+                           placeholder="Wprowadź imię i nazwisko">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Telefon:</label>
+                    <input type="tel" 
+                           id="phone" 
+                           required 
+                           placeholder="+48 XXX XXX XXX">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Adres dostawy:</label>
+                    <textarea id="address" 
+                              required 
+                              placeholder="Wprowadź pełny adres dostawy"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment">Metoda płatności:</label>
+                    <select id="payment" required>
+                        <option value="">Wybierz metodę płatności</option>
+                        <option value="card">Karta płatnicza</option>
+                        <option value="blik">BLIK</option>
+                        <option value="transfer">Przelew bankowy</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-button" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Anuluj
+                    </button>
+                    <button type="submit" class="order-button">
+                        <i class="fas fa-check"></i> Potwierdź zamówienie
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="cart.js"></script>
 </body>
 </html>
