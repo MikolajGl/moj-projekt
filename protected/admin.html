@@ -3,25 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcommerceAdmin</title>
+    <title>EcommerceAdmin | Panel Administratora</title>
     <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body class="admin-page">
     <!-- Lewy panel nawigacyjny -->
     <div class="sidebar">
-        <div class="logo">EcommerceAdmin</div>
-        
-        <a href="/public/pDashboard.html" class="menu-item">Tablica</a>
-        <a href="/public/products.html" class="menu-item">Dodawanie produktów</a>
-        <a href="/public/Orders.html" class="menu-item">Zamówienia</a>
-        <a href="/public/Settings.html" class="menu-item">Ustawienia</a>
-        <a href="/public/complaints.html" class="menu-item">Zgłoszenia</a>
+        <div class="logo">
+            <i class="fas fa-shopping-cart"></i> EcommerceAdmin
+        </div>
+
+        <div class="user-info">
+            <i class="fas fa-user-circle fa-2x"></i>
+            <span id="userName">Administrator</span>
+            <small id="userRole">Panel zarządzania</small>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/public/pDashboard.html" class="menu-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tablica</span>
+            </a>
+            <a href="/public/products.html" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Produkty</span>
+                <span class="badge" id="productsCount">0</span>
+            </a>
+            <a href="/public/Orders.html" class="menu-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Zamówienia</span>
+                <span class="badge" id="ordersCount">0</span>
+            </a>
+            <a href="/public/Settings.html" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Ustawienia</span>
+            </a>
+            <a href="/public/complaints.html" class="menu-item">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Zgłoszenia</span>
+                <span class="badge" id="complaintsCount">0</span>
+            </a>
+            <a href="/public/cart.html" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Koszyk</span>
+                <span class="badge" id="cartCount">0</span>
+            </a>
+
+            <a href="#" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Wyloguj się</span>
+            </a>
+        </nav>
     </div>
 
-    <!-- Główна zawartość -->
-    <div class="main-content">
-        <img src="/public/images/main.jpg" alt="lrz" class="main-image">
-    </div>
+    <!-- Główna zawartość -->
+    <main class="main-content">
+        <header class="content-header">
+            <h1>Panel Administratora</h1>
+            <div class="header-actions">
+                <span class="last-login">
+                    <i class="fas fa-clock"></i>
+                    Ostatnie logowanie: <span id="lastLoginTime">--:--</span>
+                </span>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="stats-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Zamówienia</h3>
+                <p class="stats-value" id="totalOrders">0</p>
+                <p class="stats-label">Aktywne zamówienia</p>
+            </div>
+
+            <div class="stats-card">
+                <i class="fas fa-box"></i>
+                <h3>Produkty</h3>
+                <p class="stats-value" id="totalProducts">0</p>
+                <p class="stats-label">Dostępne produkty</p>
+            </div>
+
+            <div class="stats-card">
+                <i class="fas fa-users"></i>
+                <h3>Użytkownicy</h3>
+                <p class="stats-value" id="totalUsers">0</p>
+                <p class="stats-label">Zarejestrowani</p>
+            </div>
+
+            <div class="stats-card">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Zgłoszenia</h3>
+                <p class="stats-value" id="totalComplaints">0</p>
+                <p class="stats-label">Oczekujące</p>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h2>Szybkie akcje</h2>
+            <div class="actions-grid">
+                <button class="action-button" onclick="location.href='/public/products.html'">
+                    <i class="fas fa-plus"></i>
+                    Dodaj produkt
+                </button>
+                <button class="action-button" onclick="location.href='/public/Orders.html'">
+                    <i class="fas fa-list"></i>
+                    Zobacz zamówienia
+                </button>
+                <button class="action-button" onclick="location.href='/public/complaints.html'">
+                    <i class="fas fa-envelope"></i>
+                    Sprawdź zgłoszenia
+                </button>
+                <button class="action-button" onclick="location.href='/public/Settings.html'">
+                    <i class="fas fa-cog"></i>
+                    Ustawienia
+                </button>
+            </div>
+        </div>
+    </main>
+
     <script src="admin.js"></script>
 </body>
 </html>
