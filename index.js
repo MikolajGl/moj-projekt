@@ -11,7 +11,7 @@ const fs = require('fs');
 const User = require('./user');
 const Product = require('./product');
 const Order = require('./Order');
-const Complaint = require('./Complaint');
+const Complaint = require('./complaint');
 
 const app = express();
 
@@ -224,16 +224,17 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/complaint', authenticateToken, async (req, res) => {
-  const { opisproblemu } = req.body;
-
-  if (!opisproblemu || !opisproblemu.length) {
+  const { opisproblem,orderId } = req.body;
+  console.log(req.user);
+  if (!opisproblem || !opisproblem.length) {
     return res.status(400).send('Brak opisu problemu');
   }
 
   try {
     const complaint = new Complaint({
       userId: req.user?.userId,
-      opisproblemu
+      opisproblem,
+      orderId
     });
 
     await complaint.save();
@@ -243,19 +244,17 @@ app.post('/api/complaint', authenticateToken, async (req, res) => {
   }
 });
 
-app.get('/api/complaint', authenticateToken, async (req, res) => {
+
+app.get('/api/complaint', authenticateToken, isAdmin, async (req, res) => {
   try {
-      const complaint = await Complaint.find({
-          userId: req.user.userId
-      }).sort({ createdAt: -1 });
-      console.log(req.user); 
-      res.status(200).json(orders);
+  const complaint = await Complaint.find()
+  .populate('userId', 'username')
+  .populate('orderId', 'name price')
+  .sort({ createdAt: -1 });
+    res.status(200).json(complaint);
   } catch (error) {
-      console.error('Orders error:', error);
-      res.status(500).json({ 
-          message: 'Błąd podczas pobierania zamówień',
-          error: error.message 
-      });
+    console.error('Admin orders error:', error);
+    res.status(500).json({ message: 'Błąd podczas pobierania wszystkich zamówień' });
   }
 });
 

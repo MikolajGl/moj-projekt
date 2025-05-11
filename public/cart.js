@@ -209,11 +209,11 @@ document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
         });
 
         if (!res.ok) throw new Error('Order failed');
-
         showNotification("Zamówienie złożone pomyślnie!", "success");
         cart.length = 0;
         updateCart();
         closeModal();
+        updateProducts();
     } catch (error) {
         showNotification("Błąd podczas składania zamówienia", "error");
     }

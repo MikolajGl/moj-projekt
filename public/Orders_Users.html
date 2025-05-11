@@ -19,6 +19,17 @@
     <div id="ordersContainer"></div>
 </div>
 </div>
+<div id="complaintModal" style="display: none;" class="modal">
+  <div class="modal-content">
+    <h2>Złóż zażalenie</h2>
+    <input type="hidden" id="complaintOrderId">
+    <textarea id="complaintText" placeholder="Opisz swój problem..." rows="6"></textarea>
+    <div class="modal-actions">
+      <button id="submitComplaint">Wyślij</button>
+      <button onclick="document.getElementById('complaintModal').style.display='none'">Anuluj</button>
+    </div>
+  </div>
+</div>
 <script src="Orders_Users.js"></script>
 </body>
 </html>

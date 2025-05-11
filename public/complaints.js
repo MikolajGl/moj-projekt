@@ -30,21 +30,21 @@ async function fetchAllComplaints() {
         return;
     }
     const complaints=await response.json();
-    const complaintcontainer=document.getElementById('complaintlist');
+    const complaintcontainer = document.getElementById('complaintsContainer');
     complaintcontainer.innerHTML = '';
 
     complaints.forEach(complaint => {
-        const complaintElement=document.createElement('div'); 
-        complaintElement.classList.add('');
-        complaintElement.innerHTML=`
+    const complaintElement = document.createElement('div'); 
+    complaintElement.classList.add('complaint-item');
+    complaintElement.innerHTML = `
         <h3>Complaint ID: ${complaint._id}</h3>
-        <p>User: ${complaint.userId.username}</p>
-        <p>Item ${complaint.total} PLN</p>
-        <p>OpisProblemu ${complaint.opisproblem} PLN</p>
+        <p>User: ${complaint.userId?.username || 'Brak użytkownika'}</p>
+        <p>Produkt: ${complaint.orderId?.name || 'Nieznany produkt'}</p>
+        <p>Opis problemu: ${complaint.opisproblem}</p>
         <hr>
-        `;
-        document.getElementById('complaintsContainer').appendChild(complaintElement);
-    });
+    `;
+    complaintcontainer.appendChild(complaintElement);
+});
 }
 
 fetchAllComplaints();

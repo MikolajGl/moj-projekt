@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     alert('Błędny token. Zaloguj się ponownie.');
     localStorage.removeItem('token');
     window.location.href = 'login.html';
-    console.log(req.user); 
     return;
   }
 
@@ -55,12 +54,45 @@ document.addEventListener('DOMContentLoaded', function () {
       <hr>
     `;
     orderElement.querySelector('.complaint-button').addEventListener('click', (e) => {
-      const orderId = e.target.dataset.orderId;
-      alert(`Złożono zażalenie do zamówienia o ID: ${orderId}`);
-    });
+        const orderId = e.target.dataset.orderId;
+        document.getElementById('complaintOrderId').value = orderId;
+        document.getElementById('complaintText').value = '';
+        document.getElementById('complaintModal').style.display = 'flex';
+      });
     orderContainer.appendChild(orderElement);
   });
   }
-
   fetchUserOrders();
+
+
+  document.getElementById('submitComplaint').addEventListener('click', async () => {
+  const orderId = document.getElementById('complaintOrderId').value;
+  const opisproblem = document.getElementById('complaintText').value.trim();
+
+  if (!opisproblem) {
+    alert('Wprowadź treść zażalenia.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:3001/api/complaint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        orderId,
+        opisproblem
+      })
+    });
+
+    if (!response.ok) throw new Error('Błąd podczas wysyłania zażalenia');
+    document.getElementById('complaintModal').style.display = 'none';
+  } catch (err) {
+    console.error(err);
+    alert('Nie udało się wysłać zażalenia.');
+  }
 });
+});
+
