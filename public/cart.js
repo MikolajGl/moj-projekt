@@ -40,54 +40,67 @@ async function fetchProducts() {
     }
 }
 
-function displayProducts(products) {
-  productsContainer.innerHTML = products.map(product => `
-      <div class="product-card">
-          <img src="${product.image}" 
-               alt="${product.name}" 
-               class="product-image"
-               onerror="this.src='/images/placeholder.png'"
-               loading="lazy">
-          <!-- ...rest of the product card... -->
-      </div>
-  `).join('');
-}
-
 function displayProducts(products, searchTerm = '') {
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    productsContainer.innerHTML = filteredProducts.map(product => `
-        <div class="product-card">
-            <img src="${product.image}" 
-                 alt="${product.name}" 
-                 class="product-image"
-                 onerror="this.src='images/placeholder.png'">
-            <div class="product-info">
-                <h3 class="product-name">${product.name}</h3>
-                <p class="product-price">${product.price.toFixed(2)} zł</p>
-                <p class="product-stock">Na stanie: ${product.stock} szt.</p>
-                <div class="product-actions">
-                    <div class="quantity-control">
-                        <button onclick="updateQuantity('${product._id}', -1)" class="qty-btn">-</button>
-                        <input type="number" 
-                               id="qty-${product._id}" 
-                               value="1" 
-                               min="1" 
-                               max="${product.stock}" 
-                               class="qty-input">
-                        <button onclick="updateQuantity('${product._id}', 1)" class="qty-btn">+</button>
-                    </div>
-                    <button onclick="addToCart('${product._id}', '${product.name}', ${product.price}, ${product.stock})"
-                            class="add-to-cart">
-                        <i class="fas fa-cart-plus"></i>
-                    </button>
-                </div>
-            </div>
+  productsContainer.innerHTML = filteredProducts.map((product, index) => {
+    const images = product.image.map((img, i) => `
+      <img src="${img}" 
+           alt="${product.name}" 
+           class="product-image ${i === 0 ? 'active' : 'hidden'}"
+           onerror="this.src='images/placeholder.png'">`
+    ).join('');
+
+    return `
+      <div class="product-card" data-index="${index}">
+        <div class="slider-container">
+          <button class="prev-btn" onclick="changeSlide(${index}, -1)">&lt;</button>
+          <div class="image-slider">
+            ${images}
+          </div>
+          <button class="next-btn" onclick="changeSlide(${index}, 1)">&gt;</button>
         </div>
-    `).join('') || '<div class="no-products">Nie znaleziono produktów</div>';
+        <div class="product-info">
+          <h3 class="product-name">${product.name}</h3>
+          <p class="product-price">${product.price.toFixed(2)} zł</p>
+          <p class="product-stock">Na stanie: ${product.stock} szt.</p>
+          <div class="product-actions">
+            <div class="quantity-control">
+              <button onclick="updateQuantity('${product._id}', -1)" class="qty-btn">-</button>
+              <input type="number" 
+                     id="qty-${product._id}" 
+                     value="1" 
+                     min="1" 
+                     max="${product.stock}" 
+                     class="qty-input">
+              <button onclick="updateQuantity('${product._id}', 1)" class="qty-btn">+</button>
+            </div>
+            <button onclick="addToCart('${product._id}', '${product.name}', ${product.price}, ${product.stock})"
+                    class="add-to-cart">
+              <i class="fas fa-cart-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('') || '<div class="no-products">Nie znaleziono produktów</div>';
 }
+
+function changeSlide(productIndex, direction) {
+  const productCard = document.querySelector(`.product-card[data-index="${productIndex}"]`);
+  const images = productCard.querySelectorAll('.product-image');
+
+  let currentIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
+  currentIndex = (currentIndex + direction + images.length) % images.length;
+
+  images.forEach((img, i) => {
+    img.classList.toggle('active', i === currentIndex);
+    img.classList.toggle('hidden', i !== currentIndex);
+  });
+} 
+
 
 function updateQuantity(productId, change) {
     const input = document.getElementById(`qty-${productId}`);
