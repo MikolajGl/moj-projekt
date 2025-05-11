@@ -33,15 +33,45 @@ async function fetchProducts() {
   products.forEach(product => {
     const productDiv = document.createElement('div');
     productDiv.classList.add('product-card');
+
     productDiv.innerHTML = `
-  ${product.image.map(img => `<img src="${img}" alt="${product.name}" class="product-image">`).join('')}
-  <div class="product-info">
-    <h3>${product.name}</h3>
-    <p>Cena: ${product.price} PLN</p>
-    <p>${product.description}</p>
-    <p>Stan magazynowy: ${product.stock}</p>
-  </div>
-`;
+      <div class="slider-container">
+        <button class="prev-btn">&lt;</button>
+        <div class="image-slider">
+          ${product.image.map((img, index) => `
+            <img src="${img}" alt="${product.name}" class="product-image ${index === 0 ? 'active' : 'hidden'}">
+          `).join('')}
+        </div>
+        <button class="next-btn">&gt;</button>
+      </div>
+      <div class="product-info">
+        <h3>${product.name}</h3>
+        <p>Cena: ${product.price} PLN</p>
+        <p>${product.description}</p>
+        <p>Stan magazynowy: ${product.stock}</p>
+      </div>
+    `;
+
+    const images = productDiv.querySelectorAll('.product-image');
+    let currentIndex = 0;
+
+    const showImage = (index) => {
+      images.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+        img.classList.toggle('hidden', i !== index);
+      });
+    };
+
+    productDiv.querySelector('.prev-btn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      showImage(currentIndex);
+    });
+
+    productDiv.querySelector('.next-btn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      showImage(currentIndex);
+    });
+
     productList.appendChild(productDiv);
   });
 }

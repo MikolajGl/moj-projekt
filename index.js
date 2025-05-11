@@ -243,6 +243,22 @@ app.post('/api/complaint', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/complaint', authenticateToken, async (req, res) => {
+  try {
+      const complaint = await Complaint.find({
+          userId: req.user.userId
+      }).sort({ createdAt: -1 });
+      console.log(req.user); 
+      res.status(200).json(orders);
+  } catch (error) {
+      console.error('Orders error:', error);
+      res.status(500).json({ 
+          message: 'Błąd podczas pobierania zamówień',
+          error: error.message 
+      });
+  }
+});
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
