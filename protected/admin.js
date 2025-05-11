@@ -1,6 +1,6 @@
 const token = localStorage.getItem('token');
 if (!token) {
-    window.location.href = '/public/login.html';
+    window.location.href = '/login.html';
 }
 
 // Token verification
@@ -11,12 +11,12 @@ try {
 } catch (err) {
     alert('Błędny token. Zaloguj się ponownie.');
     localStorage.removeItem('token');
-    window.location.href = '/public/login.html';
+    window.location.href = '/login.html';
 }
 
 if (payload.role !== 'admin') {
     alert('Brak dostępu: tylko dla admina');
-    window.location.href = '/public/main.html';
+    window.location.href = '/main.html';
 }
 
 // Last login time
@@ -78,7 +78,7 @@ document.querySelector('.logout').addEventListener('click', (e) => {
     if (confirm('Czy na pewno chcesz się wylogować?')) {
         localStorage.removeItem('token');
         localStorage.removeItem('lastLoginTime');
-        window.location.href = '/public/login.html';
+        window.location.href = '/login.html';
     }
 });
 

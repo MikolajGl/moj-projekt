@@ -39,9 +39,9 @@ form.addEventListener('submit', async (e) => {
     const role = payload.role;
 
     if (role === 'admin') {
-      window.location.href = '/protected/admin.html'; 
+      window.location.href = '/admin-panel'; 
     } else {
-      window.location.href = 'test1.html'; 
+      window.location.href = '/cart.html'; 
     }
   } catch (err) {
     console.error('Błąd logowania:', err);

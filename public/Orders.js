@@ -19,7 +19,7 @@ if (payload.role !== 'admin') {
 }
 
 async function fetchAllOrders() {
-    const response = await fetch('http://localhost:3001/api/orders',{
+    const response = await fetch('http://localhost:3001/api/admin/orders',{
         headers:{
         'Authorization': `Bearer ${token}`
         }

@@ -117,9 +117,9 @@ function authenticateToken(req, res, next) {
 app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
       const orders = await Order.find({
-          userId: req.user.id
+          userId: req.user.userId
       }).sort({ createdAt: -1 });
-      
+      console.log(req.user); 
       res.status(200).json(orders);
   } catch (error) {
       console.error('Orders error:', error);
@@ -127,6 +127,19 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
           message: 'Błąd podczas pobierania zamówień',
           error: error.message 
       });
+  }
+});
+
+
+app.get('/api/admin/orders', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId', 'username') // ← this populates username
+      .sort({ createdAt: -1 });
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Admin orders error:', error);
+    res.status(500).json({ message: 'Błąd podczas pobierania wszystkich zamówień' });
   }
 });
 
@@ -139,12 +152,12 @@ app.get('/', (req, res) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.sendFile(path.join(__dirname, 'public/login.html'));
+    return res.sendFile(path.join(__dirname, '/login.html'));
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
-      return res.sendFile(path.join(__dirname, 'public/login.html'));
+      return res.sendFile(path.join(__dirname, '/login.html'));
     }
     res.redirect('/admin-panel');
   });
