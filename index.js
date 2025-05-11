@@ -260,6 +260,35 @@ app.get('/api/complaint', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+app.get('/api/admin/stats', authenticateToken, isAdmin, async (req, res) => {
+  try {
+        const totalOrders = await Order.countDocuments({});
+        const totalProducts = await Product.countDocuments({});
+        const totalUsers = await User.countDocuments({});
+        const totalComplaints = await Complaint.countDocuments({});
+        
+        const pendingOrders = await Order.countDocuments({});
+        const pendingComplaints = await Complaint.countDocuments({});
+
+        const cartItems = 100; 
+
+        res.json({
+            orders: totalOrders,
+            products: totalProducts,
+            users: totalUsers,
+            complaints: totalComplaints,
+            pendingOrders: pendingOrders,
+            pendingComplaints: pendingComplaints,
+            cartItems: cartItems,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching stats' });
+    }
+});
+
+
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
