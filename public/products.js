@@ -34,14 +34,14 @@ async function fetchProducts() {
     const productDiv = document.createElement('div');
     productDiv.classList.add('product-card');
     productDiv.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image">
-      <div class="product-info">
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-price">Cena: ${product.price} PLN</p>
-        <p class="product-description">${product.description}</p>
-        <p class="product-stock">Stan magazynowy: ${product.stock}</p>
-      </div>
-    `;
+  ${product.image.map(img => `<img src="${img}" alt="${product.name}" class="product-image">`).join('')}
+  <div class="product-info">
+    <h3>${product.name}</h3>
+    <p>Cena: ${product.price} PLN</p>
+    <p>${product.description}</p>
+    <p>Stan magazynowy: ${product.stock}</p>
+  </div>
+`;
     productList.appendChild(productDiv);
   });
 }
@@ -56,7 +56,10 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
   formData.append('price', parseFloat(document.getElementById('price').value));
   formData.append('description', document.getElementById('description').value);
   formData.append('stock', parseInt(document.getElementById('stock').value));
-  formData.append('image', document.getElementById('image').files[0]); 
+  const imageFiles = document.getElementById('image').files;
+  for (let i = 0; i < imageFiles.length; i++) {
+  formData.append('image', imageFiles[i]);
+}
   try {
     const response = await fetch('http://localhost:3001/api/products', {
       method: 'POST',

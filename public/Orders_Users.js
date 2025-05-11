@@ -33,19 +33,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const orderContainer = document.getElementById('ordersContainer');
     orderContainer.innerHTML = '';
     orders.forEach(order => {
-      const orderElement = document.createElement('div');
-      orderElement.classList.add('order-item');
-      orderElement.innerHTML = `
-        <h3>Order ID: ${order._id}</h3>
-        <p>Total Price: ${order.total} PLN</p>
-        <p>Address: ${order.address}</p>
-        <p>Payment ID: ${order.paymentID}</p>
-        <h4>Products:</h4>
-        <ul>${order.products.map(p => `<li><p>Nazwa: ${p.name}</p><p>Cena: ${p.price}</p><p>Ilość: ${p.quantity}</p></li>`).join('')}</ul>
-        <hr>
-      `;
-      orderContainer.appendChild(orderElement);
+    const orderElement = document.createElement('div');
+    orderElement.classList.add('order-item');
+
+    orderElement.innerHTML = `
+      <h3>Order ID: ${order._id}</h3>
+      <p>Total Price: ${order.total} PLN</p>
+      <p>Address: ${order.address}</p>
+      <p>Payment ID: ${order.paymentID}</p>
+      <h4>Products:</h4>
+      <ul>
+        ${order.products.map(p => `
+          <li>
+            <p>Nazwa: ${p.name}</p>
+            <p>Cena: ${p.price}</p>
+            <p>Ilość: ${p.quantity}</p>
+          </li>
+        `).join('')}
+      </ul>
+      <button class="complaint-button" data-order-id="${order._id}">Złóż zażalenie</button>
+      <hr>
+    `;
+    orderElement.querySelector('.complaint-button').addEventListener('click', (e) => {
+      const orderId = e.target.dataset.orderId;
+      alert(`Złożono zażalenie do zamówienia o ID: ${orderId}`);
     });
+    orderContainer.appendChild(orderElement);
+  });
   }
 
   fetchUserOrders();

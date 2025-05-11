@@ -11,7 +11,7 @@ const fs = require('fs');
 const User = require('./user');
 const Product = require('./product');
 const Order = require('./Order');
-const complaint = require('./complaint');
+const Complaint = require('./Complaint');
 
 const app = express();
 
@@ -173,20 +173,22 @@ app.get('/api/products', async (req, res) => {
 });
 
 
-app.post('/api/products', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
+app.post('/api/products', authenticateToken, isAdmin, upload.array('image', 5), async (req, res) => {
   const { name, price, description, stock } = req.body;
 
-  if (!req.file) {
+  if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: 'Zdjęcie jest wymagane.' });
   }
 
   try {
+    const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+
     const product = new Product({
       name,
       price,
       description,
       stock,
-      image: `/uploads/${req.file.filename}` 
+      image: imagePaths
     });
 
     await product.save();
@@ -229,7 +231,7 @@ app.post('/api/complaint', authenticateToken, async (req, res) => {
   }
 
   try {
-    const complaint = new complaint({
+    const complaint = new Complaint({
       userId: req.user?.userId,
       opisproblemu
     });
