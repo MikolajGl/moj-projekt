@@ -73,13 +73,15 @@ async function fetchStats() {
 }
 
 // Logout handler
-document.querySelector('.logout').addEventListener('click', (e) => {
-    e.preventDefault();
-    if (confirm('Czy na pewno chcesz się wylogować?')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('lastLoginTime');
-        window.location.href = '/login.html';
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm('Czy na pewno chcesz się wylogować?')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('lastLoginTime');
+            window.location.href = '/login.html';
+        }
+    });
 });
 
 // Initialize dashboard
