@@ -191,12 +191,10 @@ document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const orderData = {
-        products: cart,
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        payment: document.getElementById('payment').value
-    };
+    products: cart,
+    address: document.getElementById('address').value,
+    paymentID: document.getElementById('payment').value
+};
 
     try {
         const res = await fetch('http://localhost:3001/api/orders', {
@@ -208,7 +206,10 @@ document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
             body: JSON.stringify(orderData)
         });
 
-        if (!res.ok) throw new Error('Order failed');
+        if (!res.ok) {
+  const errorText = await res.text();
+  throw new Error(errorText || 'Order failed');
+}
         showNotification("Zamówienie złożone pomyślnie!", "success");
         cart.length = 0;
         updateCart();

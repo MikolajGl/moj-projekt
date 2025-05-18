@@ -5,6 +5,7 @@ if (!token) {
 }
 
 let payload;
+let editingProductId = null;
 try {
   payload = JSON.parse(atob(token.split('.')[1]));
 } catch (err) {
@@ -71,8 +72,12 @@ async function fetchProducts() {
       currentIndex = (currentIndex + 1) % images.length;
       showImage(currentIndex);
     });
-
-    productList.appendChild(productDiv);
+const editBtn = document.createElement('button');
+editBtn.textContent = 'Edytuj';
+editBtn.classList.add('edit-button');
+editBtn.addEventListener('click', () => populateFormForEdit(product));
+productDiv.appendChild(editBtn);
+productList.appendChild(productDiv);
   });
 }
 
@@ -86,28 +91,50 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
   formData.append('price', parseFloat(document.getElementById('price').value));
   formData.append('description', document.getElementById('description').value);
   formData.append('stock', parseInt(document.getElementById('stock').value));
+
   const imageFiles = document.getElementById('image').files;
   for (let i = 0; i < imageFiles.length; i++) {
-  formData.append('image', imageFiles[i]);
-}
+    formData.append('image', imageFiles[i]);
+  }
+
+  const isEditing = !!editingProductId;
+  const url = isEditing
+    ? `http://localhost:3001/api/products/${editingProductId}`
+    : 'http://localhost:3001/api/products';
+  const method = isEditing ? 'PUT' : 'POST';
+
   try {
-    const response = await fetch('http://localhost:3001/api/products', {
-      method: 'POST',
+    const response = await fetch(url, {
+      method,
       headers: {
-        'Authorization': `Bearer ${token}` 
+        'Authorization': `Bearer ${token}`
       },
-      body: formData 
+      body: formData
     });
 
     if (response.ok) {
-      alert('Produkt dodany!');
+      alert(isEditing ? 'Produkt zaktualizowany!' : 'Produkt dodany!');
+      editingProductId = null;
+      document.getElementById('productForm').reset();
+      document.querySelector('#productForm button[type="submit"]').textContent = 'Dodaj produkt';
       fetchProducts();
     } else {
       const error = await response.json();
       alert(`Błąd: ${error.message}`);
     }
   } catch (err) {
-    console.error('Błąd podczas dodawania produktu:', err);
-    alert('Nie udało się dodać produktu.');
+    console.error('Błąd podczas wysyłania formularza:', err);
+    alert('Wystąpił błąd.');
   }
 });
+
+function populateFormForEdit(product) {
+  document.getElementById('name').value = product.name;
+  document.getElementById('price').value = product.price;
+  document.getElementById('description').value = product.description;
+  document.getElementById('stock').value = product.stock;
+  editingProductId = product._id;
+
+  const submitBtn = document.querySelector('#productForm button[type="submit"]');
+  submitBtn.textContent = 'Zaktualizuj produkt';
+}

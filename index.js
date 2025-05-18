@@ -208,6 +208,8 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
   }
 
   const total = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+ console.log('req.body:', req.body);
+  console.log('req.user:', req.user);
 
   try {
     const order = new Order({
@@ -217,10 +219,10 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
       address,
       paymentID
     });
-
     await order.save();
     res.status(201).json({ message: 'Zamówienie zapisane', orderId: order._id });
   } catch (err) {
+    console.error('Błąd zapisu zamówienia:', err);
     res.status(500).send('Błąd zapisu zamówienia: ' + err.message);
   }
 });
@@ -287,7 +289,51 @@ app.get('/api/admin/stats', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+app.put('/api/products/:id', authenticateToken, isAdmin, upload.array('image', 5), async (req, res) => {
+  const { name, price, description, stock } = req.body;
 
+  try {
+    const updateFields = {
+      name,
+      price,
+      description,
+      stock
+    };
+
+    if (req.files) {
+      updateFields.image = req.files.map(file => `/uploads/${file.filename}`);
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Nie znaleziono produktu' });
+    }
+
+    res.json({ message: 'Produkt zaktualizowany', product: updatedProduct });
+  } catch (err) {
+    console.error('Błąd aktualizacji produktu:', err);
+    res.status(500).json({ message: 'Błąd podczas aktualizacji produktu: ' + err.message });
+  }
+});
+
+app.delete('/api/products/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Produkt nie znaleziony' });
+    }
+
+    res.status(200).json({ message: 'Produkt usunięty' });
+  } catch (err) {
+    console.error('Błąd przy usuwaniu produktu:', err);
+    res.status(500).json({ message: 'Błąd serwera przy usuwaniu produktu' });
+  }
+});
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
