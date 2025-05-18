@@ -211,7 +211,13 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
  console.log('req.body:', req.body);
   console.log('req.user:', req.user);
 
+
   try {
+     for (const item of products) {
+      const product = await Product.findById(item.productId);
+      product.stock -= item.quantity;
+      await product.save();
+    }
     const order = new Order({
       userId: req.user?.userId,
       products,

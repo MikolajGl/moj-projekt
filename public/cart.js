@@ -215,8 +215,10 @@ document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
         updateCart();
         closeModal();
         updateProducts();
+        location.reload();
     } catch (error) {
         showNotification("Błąd podczas składania zamówienia", "error");
+        location.reload();
     }
 });
 
