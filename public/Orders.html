@@ -3,24 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcommerceAdmin</title>
+    <title>EcommerceAdmin | Zamówienia</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="admin-page">
     <div class="sidebar">
-        <div class="logo">Zamówienia</div>
-        <a href="admin-panel" class="menu-item">Admin_Page</a>
-        <a href="settings.html" class="menu-item">Ustawienia</a>
-        <a href="complaints.html" class="menu-item">Reklamacje</a>
-        <a href="products.html" class="menu-item">Produkty</a>
+        <div class="logo">
+            <i class="fas fa-shopping-cart"></i> EcommerceShop
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="admin-panel" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Panel główny</span>
+            </a>
+            <a href="Orders.html" class="menu-item active">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Zamówienia</span>
+                <span class="badge" id="ordersCount">0</span>
+            </a>
+            <a href="products.html" class="menu-item">
+                <i class="fas fa-box"></i>
+                <span>Produkty</span>
+            </a>
+            <a href="complaints.html" class="menu-item">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Reklamacje</span>
+            </a>
+            <a href="#" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Wyloguj się</span>
+            </a>
+        </nav>
     </div>
 
-    <div class="main-content">
-        <h1>Zamówienia</h1>
-        <div id="orderlist"></div>
-        <div id="ordersContainer"></div>
-  </form>
-  <script src="Orders.js"></script>
-</div>
+    <main class="main-content">
+        <header class="content-header">
+            <h1><i class="fas fa-shopping-bag"></i> Zamówienia</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <input type="text" 
+                           id="searchOrders" 
+                           placeholder="Szukaj zamówienia..."
+                           autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filters">
+                    <select id="statusFilter">
+                        <option value="all">Wszystkie statusy</option>
+                        <option value="new">Nowe</option>
+                        <option value="processing">W realizacji</option>
+                        <option value="completed">Zakończone</option>
+                    </select>
+                    <select id="sortBy">
+                        <option value="newest">Od najnowszych</option>
+                        <option value="oldest">Od najstarszych</option>
+                        <option value="price-high">Najwyższa kwota</option>
+                        <option value="price-low">Najniższa kwota</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <div class="orders-grid" id="ordersContainer">
+            
+        </div>
+    </main>
+
+    <script src="Orders.js"></script>
 </body>
+</html>
