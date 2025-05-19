@@ -50,5 +50,5 @@ async function fetchAllOrders() {
         document.getElementById('ordersContainer').appendChild(orderElement);
     });
 }
-
+//admin zmiana na zakonczone
 fetchAllOrders();

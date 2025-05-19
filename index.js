@@ -254,12 +254,12 @@ app.post('/api/complaint', authenticateToken, async (req, res) => {
   }
 });
 
-
+//trzeba stowrzyć id dla order
 app.get('/api/complaint', authenticateToken, isAdmin, async (req, res) => {
   try {
   const complaint = await Complaint.find()
   .populate('userId', 'username')
-  .populate('orderId', 'name price')
+  .populate('orderId', 'paymentID')
   .sort({ createdAt: -1 });
     res.status(200).json(complaint);
   } catch (error) {
@@ -268,6 +268,7 @@ app.get('/api/complaint', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+// tu nadal brakuje odnosnikow w bazie danych do tego kiedy są skonczone trzeba dodać je i dodać umożliwnie zmiany od panelu admina
 app.get('/api/admin/stats', authenticateToken, isAdmin, async (req, res) => {
   try {
         const totalOrders = await Order.countDocuments({});

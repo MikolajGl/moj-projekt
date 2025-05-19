@@ -39,7 +39,7 @@ async function fetchAllComplaints() {
     complaintElement.innerHTML = `
         <h3>Complaint ID: ${complaint._id}</h3>
         <p>User: ${complaint.userId?.username || 'Brak użytkownika'}</p>
-        <p>Produkt: ${complaint.orderId?.name || 'Nieznany produkt'}</p>
+        <p>Produkt: ${complaint.orderId?.paymentID || 'Nieznany produkt'}</p>
         <p>Opis problemu: ${complaint.opisproblem}</p>
         <hr>
     `;
